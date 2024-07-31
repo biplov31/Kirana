@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface KiranaUserRepository extends JpaRepository<KiranaUser, Integer> {
 
-    KiranaUser findByUsername(String username);
+    Optional<KiranaUser> findByUsername(String username);
 
 }

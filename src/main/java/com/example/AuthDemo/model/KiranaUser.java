@@ -23,7 +23,7 @@ public class KiranaUser {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "role", nullable = false)
-    private KiranaUserRole role = KiranaUserRole.USER;
+    @Column(name = "roles", nullable = false)
+    private String roles;
 
 }
