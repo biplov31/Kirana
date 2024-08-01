@@ -26,7 +26,7 @@ public class KiranaUserService {
                 .username(userDto.getUsername())
                 .email(userDto.getEmail())
                 .password(passwordEncoder.encode(userDto.getPassword()))
-                .role(userDto.getRole())
+                .roles(userDto.getRoles())
                 .build();
 
         if (userRepository.save(user) instanceof KiranaUser) {

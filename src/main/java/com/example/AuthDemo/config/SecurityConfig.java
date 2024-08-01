@@ -1,13 +1,15 @@
 package com.example.AuthDemo.config;
 
 import com.example.AuthDemo.repository.KiranaUserRepository;
+import com.example.AuthDemo.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -15,47 +17,39 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
-    private final KiranaUserRepository userRepository;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(UserDetailsService userDetailsService, KiranaUserRepository userRepository) {
-        this.userDetailsService = userDetailsService;
-        this.userRepository = userRepository;
+    public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl, PasswordEncoder passwordEncoder) {
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.passwordEncoder = passwordEncoder;
     }
-
-    // @Bean
-    // public UserDetailsService userDetailsService() {
-    //     var service = new InMemoryUserDetailsManager();
-    //
-    //     var user = User.withUsername("John")
-    //             .password("john123")
-    //             .roles("CA")
-    //             .build();
-    //
-    //     service.createUser(user);
-    //     return service;
-    // }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(Customizer.withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
-                        c -> c.requestMatchers("/").hasAnyRole("USER", "SUPER_ADMIN")
+                        c -> c.requestMatchers("/user").hasAnyRole("USER", "SUPER_ADMIN")
                                 .requestMatchers("/ca").hasAnyRole("CA", "SUPER_ADMIN")
                                 .requestMatchers("/super-admin").hasRole("SUPER_ADMIN")
                                 .requestMatchers("/signup").permitAll()
                                 .anyRequest().authenticated()
-                );
+                )
+                .userDetailsService(userDetailsServiceImpl)
+                .authenticationProvider(new KiranaAuthenticationProvider(userDetailsServiceImpl, passwordEncoder));
 
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        // return new BCryptPasswordEncoder();
-        return NoOpPasswordEncoder.getInstance();
-    }
+    // @Bean
+    // public DaoAuthenticationProvider authenticationProvider() {
+    //     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+    //     authProvider.setUserDetailsService(userDetailsServiceImpl);
+    //     authProvider.setPasswordEncoder(passwordEncoder);
+    //     return authProvider;
+    // }
 
 }

@@ -14,6 +14,6 @@ public class KiranaUserDto {
     private String username;
     private String email;
     private String password;
-    private KiranaUserRole role;
+    private String roles;
 
 }
