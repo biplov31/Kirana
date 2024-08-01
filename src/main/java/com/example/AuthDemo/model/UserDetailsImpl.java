@@ -7,17 +7,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class SecurityUser implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
 
     private KiranaUser kiranaUser;
 
-    public SecurityUser(KiranaUser kiranaUser) {
+    public UserDetailsImpl(KiranaUser kiranaUser) {
         this.kiranaUser = kiranaUser;
     }
 
     @Override
     public String getUsername() {
-        return kiranaUser.getUsername();
+        return kiranaUser.getEmail();
     }
 
     @Override
