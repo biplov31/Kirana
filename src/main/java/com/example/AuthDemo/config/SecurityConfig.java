@@ -18,15 +18,11 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsServiceImpl;
-    private final KiranaAuthenticationProvider kiranaAuthenticationProvider;
-    private final KiranaUserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl, KiranaAuthenticationProvider kiranaAuthenticationProvider, KiranaUserRepository userRepository) {
+    public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl, PasswordEncoder passwordEncoder) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
-        this.kiranaAuthenticationProvider = kiranaAuthenticationProvider;
-        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
@@ -36,14 +32,14 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
-                        c -> c.requestMatchers("/").hasAnyRole("USER", "SUPER_ADMIN")
+                        c -> c.requestMatchers("/user").hasAnyRole("USER", "SUPER_ADMIN")
                                 .requestMatchers("/ca").hasAnyRole("CA", "SUPER_ADMIN")
                                 .requestMatchers("/super-admin").hasRole("SUPER_ADMIN")
                                 .requestMatchers("/signup").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .userDetailsService(userDetailsServiceImpl);
-                // .authenticationProvider(kiranaAuthenticationProvider);
+                .userDetailsService(userDetailsServiceImpl)
+                .authenticationProvider(new KiranaAuthenticationProvider(userDetailsServiceImpl, passwordEncoder));
 
         return http.build();
     }
@@ -54,12 +50,6 @@ public class SecurityConfig {
     //     authProvider.setUserDetailsService(userDetailsServiceImpl);
     //     authProvider.setPasswordEncoder(passwordEncoder);
     //     return authProvider;
-    // }
-
-
-    // @Bean
-    // public PasswordEncoder passwordEncoder() {
-    //     return new BCryptPasswordEncoder();
     // }
 
 }

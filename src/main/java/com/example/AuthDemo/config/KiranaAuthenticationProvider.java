@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-@Component
 public class KiranaAuthenticationProvider implements AuthenticationProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(KiranaAuthenticationProvider.class);
@@ -30,8 +29,6 @@ public class KiranaAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-
-        logger.info("Authenticating user: {}", username);
 
         UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
 

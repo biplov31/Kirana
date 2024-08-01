@@ -26,6 +26,11 @@ public class KiranaUserController {
     }
 
     @GetMapping
+    public String sendPublicResponse() {
+        return "Hello from Kirana!";
+    }
+
+    @GetMapping("/user")
     public String sendUserResponse() {
         return userService.greetUser();
     }
