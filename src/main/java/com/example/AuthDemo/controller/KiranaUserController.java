@@ -1,28 +1,34 @@
 package com.example.AuthDemo.controller;
 
-import com.example.AuthDemo.dto.KiranaUserDto;
+import com.example.AuthDemo.dto.KiranaUserAuthenticationDto;
+import com.example.AuthDemo.dto.KiranaUserRegistrationDto;
+import com.example.AuthDemo.dto.KiranaUserResponseDto;
 import com.example.AuthDemo.service.KiranaUserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 public class KiranaUserController {
 
     private final KiranaUserService userService;
 
-    public KiranaUserController(KiranaUserService userService) {
-        this.userService = userService;
-    }
-
     @PostMapping("/signup")
-    public ResponseEntity<KiranaUserDto> signUp(@RequestBody KiranaUserDto userDto) {
-        KiranaUserDto createdUser = userService.signUp(userDto);
-        if (createdUser != null) {
-            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    public ResponseEntity<KiranaUserResponseDto> register(@RequestBody KiranaUserRegistrationDto userDto) {
+        KiranaUserResponseDto responseDto = userService.signUp(userDto);
+        if (responseDto != null) {
+            return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<KiranaUserResponseDto> authenticate(@RequestBody KiranaUserAuthenticationDto userDto) {
+        KiranaUserResponseDto responseDto = userService.authenticate(userDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @GetMapping

@@ -1,6 +1,7 @@
 package com.example.AuthDemo.config;
 
 import com.example.AuthDemo.service.UserDetailsServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -13,17 +14,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 public class KiranaAuthenticationProvider implements AuthenticationProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(KiranaAuthenticationProvider.class);
 
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final PasswordEncoder passwordEncoder;
-
-    public KiranaAuthenticationProvider(UserDetailsServiceImpl userDetailsServiceImpl, PasswordEncoder passwordEncoder) {
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -34,8 +31,6 @@ public class KiranaAuthenticationProvider implements AuthenticationProvider {
 
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
-            // SecurityContextHolder.getContext().setAuthentication(auth);
-            // return auth;
         } else {
             throw new BadCredentialsException("Invalid credentials.");
         }

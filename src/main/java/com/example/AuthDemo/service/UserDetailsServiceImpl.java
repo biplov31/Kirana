@@ -1,9 +1,7 @@
 package com.example.AuthDemo.service;
 
-import com.example.AuthDemo.model.KiranaUser;
-import com.example.AuthDemo.model.SecurityUser;
+import com.example.AuthDemo.model.UserDetailsImpl;
 import com.example.AuthDemo.repository.KiranaUserRepository;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,9 +19,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository
-                .findByUsername(username)
-                .map(SecurityUser::new)
-                .orElseThrow(() -> new UsernameNotFoundException(username + "does not exist."));
+                .findByEmail(username)
+                .map(UserDetailsImpl::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User does not exist."));
 
     }
 
