@@ -36,6 +36,7 @@ public class SecurityConfig {
                                 .requestMatchers("/super-admin").hasRole("SUPER_ADMIN")
                                 .requestMatchers("/signup").permitAll()
                                 .requestMatchers("/authenticate").permitAll()
+                                .requestMatchers("/verify").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsServiceImpl)

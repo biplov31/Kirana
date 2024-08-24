@@ -27,6 +27,8 @@ public class KiranaUser {
     private String password;
     @Column(name = "roles", nullable = false)
     private String roles;
+    @Column(name = "is_verified", nullable = true)
+    private boolean isVerified = false;
 
     @OneToMany(mappedBy = "kiranaUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<ImageFile> imageFiles;

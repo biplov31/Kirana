@@ -18,7 +18,7 @@ public class LoggedInUser {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String loggedInEmail = authentication.getName();
-
+        // String loggedInEmail = "biplov.thapa@aadimcollege.edu.np";
         KiranaUser loggedInUser = userRepository.findByEmail(loggedInEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
 

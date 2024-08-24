@@ -1,5 +1,6 @@
 package com.example.Kirana.controller;
 
+import com.example.Kirana.dto.KiranaOtpVerificationDto;
 import com.example.Kirana.dto.KiranaUserAuthenticationDto;
 import com.example.Kirana.dto.KiranaUserRegistrationDto;
 import com.example.Kirana.dto.KiranaUserResponseDto;
@@ -22,6 +23,16 @@ public class KiranaUserController {
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<String> verify(@RequestBody KiranaOtpVerificationDto kiranaOtpVerificationDto) {
+        boolean isVerified = userService.verifyEmail(kiranaOtpVerificationDto);
+        if (isVerified) {
+            return new ResponseEntity<>("User verification successful.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Failed to verify user.", HttpStatus.BAD_REQUEST);
         }
     }
 

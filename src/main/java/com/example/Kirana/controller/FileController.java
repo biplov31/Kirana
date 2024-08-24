@@ -33,6 +33,8 @@ public class FileController {
 
     @PostMapping("/upload-bill")
     public ResponseEntity<List<String>> uploadFile(@RequestParam("images") List<MultipartFile> files) {
+        System.out.println("Incoming files:");
+        System.out.println(files.stream().map(file -> file.getOriginalFilename()).toList());
         List<String> savedFileNames = fileService.saveFiles(files);
         if (savedFileNames != null) {
             return new ResponseEntity<>(savedFileNames, HttpStatus.OK);

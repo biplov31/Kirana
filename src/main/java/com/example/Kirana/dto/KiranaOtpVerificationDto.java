@@ -5,12 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class KiranaUserResponseDto {
+import java.time.LocalDateTime;
 
-    private String accessToken;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class KiranaOtpVerificationDto {
+
+    private String otp;
 
 }

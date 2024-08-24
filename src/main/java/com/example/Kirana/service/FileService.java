@@ -38,7 +38,8 @@ public class FileService {
     private static final Set<String> ALLOWED_FILE_TYPES = Set.of(
             MediaType.IMAGE_JPEG_VALUE,
             MediaType.IMAGE_PNG_VALUE,
-            "image/jpg"
+            "image/jpg",
+            MediaType.APPLICATION_OCTET_STREAM_VALUE
     );
 
     private final FileRepository fileRepository;
@@ -51,7 +52,7 @@ public class FileService {
         return fileNameSplits[nameIndex] + "_" + uuid.toString() + "." + fileNameSplits[extensionIndex];
     }
 
-    public void saveFileToDrive(MultipartFile file) {
+    public ImageFile saveFileToDrive(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String contentType = file.getContentType();
         if (fileName == null || fileName.contains("..") || !ALLOWED_FILE_TYPES.contains(contentType)) {
@@ -65,8 +66,15 @@ public class FileService {
             Files.createDirectories(targetFilePath.getParent());
             // copy the file to the target location
             Files.copy(file.getInputStream(), targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+
+            return ImageFile.builder()
+                    .fileName(fileName)
+                    .fileType(contentType)
+                    .filePath(targetFilePath.toString())
+                    .build();
         } catch (IOException e) {
             log.error("IO Exception: {}", e.getMessage());
+            return null;
         }
     }
 
@@ -111,8 +119,8 @@ public class FileService {
         KiranaUser kiranaUser = loggedInUser.getLoggedInUserEntity();
         List<ImageFile> imageFileList = fileList.stream()
                 .map(file -> {
-                    saveFileToDrive(file);
-                    ImageFile savedFile = saveFileToFolder(file);
+                    ImageFile savedFile = saveFileToDrive(file);
+                    // ImageFile savedFile = saveFileToFolder(file);
                     savedFile.setKiranaUser(kiranaUser);
                     return savedFile;
                 })
